@@ -10,9 +10,14 @@ import csv
 from numpy import std
 from collections import OrderedDict
 
-
-
 class Boxes():
+    '''
+    Sets the pattern used to group the matrices\n
+    Set the .table attribute to a 2d array of size 12x14\n
+    Use intergers to separate groups out\n
+    By default, it's using a given layout by request\n
+    With titles implemented, but this table will work with strings and chars as well
+    '''
     def __init__(self, table = None, default = True):
         self.default = default
         default_ref = {0:"NotValid",
@@ -44,7 +49,20 @@ class Boxes():
         
 
 class Matrix():
+    '''
+    Matrix object\n
+    Contains information on each matrix generated\n
+    It also collect averages for each zone/section\n
+    And provides statistics\n
+    '''
     def __init__(self, tile, matrix, pattern = Boxes(), combined = [], run = ""):
+        '''
+        tile = the tile number this matrix represents\n
+        matrix = a 2d list of int\n
+        pattern = the pattern used for parsing out the sub groups\n
+        combined = a list of tuples of size two to combine groups\n
+        run = the run name\n
+        '''
         self.matrix = matrix
         self.tile_38 = tile
         self.surface = "Top" if tile < 20 else "Bottom"
@@ -58,6 +76,11 @@ class Matrix():
         self.data, self.values, self.titles = self.data_collect()
         
     def get_zones(self, combined):
+        '''
+        Separates out the 2d matrix by zones\n
+        To use for statistics\n
+        Combined is a list of tuples of size 2\n
+        '''
         if self.pattern.default:
             pat = self.pattern.default_table
         else:
@@ -80,18 +103,27 @@ class Matrix():
         return holder
         
     def get_averages(self):
+        '''
+        Builds a dict, where the key is the zone, and the value is the average\n
+        '''
         averages = {}       
         for i in self.zones:
             averages[i] = sum(self.zones[i])/len(self.zones[i])
         return averages
         
     def get_stdv(self):
+        '''
+        Builds a dict, where the key is the zone, and the value is the stdv\n
+        '''
         stdv = {}
         for i in self.zones:
             stdv[i] = std(self.zones[i])
         return stdv
         
     def data_collect(self):
+        '''
+        organizes the data into a format for easier parsing\n
+        '''
         title = []
         title = ["Run","Surface","Tile","Tile_38"]
         for i in self.averages:
@@ -109,12 +141,23 @@ class Matrix():
         return d, holder, title
         
 class Run_file():
+    '''
+    Takes a run file, which is a csv with multiple matrices\n
+    Separated by new line characters\n
+    '''
     def __init__(self, fpath):
+        '''
+        fpath = file path to a csv
+        '''
         self.fpath = fpath
         self.matrix_list = {}
         self.tile_counter = 1
         
     def file_read(self, combined = []):
+        '''
+        reads in a csv, and creates matrix objects, to feed into dict matrix_list
+        combined is a list of tuples
+        '''
         matrix = []
         with open(self.fpath,"r") as fhand:
             run = os.path.split(self.fpath)[1]
