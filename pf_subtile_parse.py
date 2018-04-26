@@ -55,7 +55,7 @@ class Matrix():
     It also collect averages for each zone/section\n
     And provides statistics\n
     '''
-    def __init__(self, tile, matrix, pattern = Boxes(), combined = [], run = ""):
+    def __init__(self, tile, matrix, pattern = Boxes(default = True), combined = [], run = ""):
         '''
         tile = the tile number this matrix represents\n
         matrix = a 2d list of int\n
@@ -74,7 +74,7 @@ class Matrix():
         self.averages = self.get_averages()
         self.stdv = self.get_stdv()
         self.data, self.values, self.titles = self.data_collect()
-        
+
     def get_zones(self, combined):
         '''
         Separates out the 2d matrix by zones\n
@@ -177,7 +177,8 @@ class Run_file():
     
 def main():
     folder = r"C:\Users\jnguyen3\Desktop\Production FIT Run Outputs from Thara"
-    combined = [("TopLeft","BottomLeft"),("TopRight","BottomRight"),("TopLeft","TopRight"),("BottomLeft","BottomRight")]
+    #combined = [("TopLeft","BottomLeft"),("TopRight","BottomRight"),("TopLeft","TopRight"),("BottomLeft","BottomRight")]
+    combined = []    
     titles = []
     with open("subtile_pf_output.csv","wb") as csvfile:
         writer = csv.writer(csvfile)
